@@ -1,7 +1,9 @@
 [package]
 name = "rust-pro"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-vulkano = "0.35.2"
+wgpu = "0.19"
+winit = "0.29"
+pollster = "0.3"
