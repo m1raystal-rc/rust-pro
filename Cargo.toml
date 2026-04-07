@@ -7,3 +7,7 @@ edition = "2021"
 wgpu = "0.19"
 winit = "0.29"
 pollster = "0.3"
+
+[[bin]]
+name = "rust-pro"
+path = "src/bin/main.rs"
