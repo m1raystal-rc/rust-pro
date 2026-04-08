@@ -148,7 +148,6 @@ async fn init_wgpu(window: &'static winit::window::Window) -> (wgpu::Surface<'st
 }
 
 
-
 fn test() {
 	let num = 0;
 	println!(
