@@ -126,6 +126,6 @@ fn test() -> Result<(), Box<dyn Error>> {
 		let module = Parser::new(ParserDes {
 				path: "_module/cube.glb",
 		})?;
-		module.glb()?;
+		let pkg = module.glb()?;
 		Ok(())
 }
