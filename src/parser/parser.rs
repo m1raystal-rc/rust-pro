@@ -15,7 +15,7 @@ pub struct Indicate {
 }
 pub struct Package {
 		pub vertices: Vec<Vertex>,
-		pub indicates: Vec<Indicate>,
+		pub indices: Vec<Indicate>,
 }
 pub struct Parser<'a> {
 		path: &'a str,
@@ -37,10 +37,9 @@ impl<'a> Parser<'a> {
 				
 				let json_len = u32::from_le_bytes([data[12], data[13], data[14], data[15]]) as usize;
 				let json: Value = serde_json::from_slice(&data[20..20 + json_len])?; //1068
-				//println!("{:?}", json);
 				
 				let mut bin_index = json_len + 20; //1088
-				if (bin_index % 4 != 0) { bin_index += 4 - (bin_index % 4); } // align
+				if bin_index % 4 != 0 { bin_index += 4 - (bin_index % 4); } // align
 				let bin_len = //840
 						u32::from_le_bytes([data[bin_index], data[bin_index + 1], data[bin_index + 2], data[bin_index + 3]]) as usize;
 				
@@ -49,7 +48,7 @@ impl<'a> Parser<'a> {
 				let vertices: Vec<Vertex> = read_vertices(&json, &data[data_bin..data_end])?;
 				let indicates: Vec<Indicate> = read_indicates(&json, &data[data_bin..data_end])?;
 				
-				Ok(Package { vertices, indicates })
+				Ok(Package { vertices, indices: indicates })
 		}
 }
 fn read_indicates(json: &Value, data: &[u8]) -> Result<Vec<Indicate>, Box<dyn Error>> {
@@ -60,13 +59,16 @@ fn read_indicates(json: &Value, data: &[u8]) -> Result<Vec<Indicate>, Box<dyn Er
 		
 		for i in (0..count).step_by(3) {
 				let offset = pos_offset + i * 2;
-				let f = u16::from_le_bytes([data[offset], data[offset + 1]]);
-				let s = u16::from_le_bytes([data[offset + 2], data[offset + 3]]);
-				let t = u16::from_le_bytes([data[offset + 4], data[offset + 5]]);
 				indicates_r.push(Indicate {
-						indicates: [f, s, t],
+						indicates: [
+								u16::from_le_bytes([data[offset],
+										data[offset + 1]]),
+								u16::from_le_bytes([data[offset + 2],
+										data[offset + 3]]),
+								u16::from_le_bytes([data[offset + 4],
+										data[offset + 5]])
+						],
 				});
-				//println!("{},{}|{}|{}", i, f, s, t)
 		}
 		Ok(indicates_r)
 }
@@ -93,7 +95,6 @@ fn read_vertices(json: &Value, data: &[u8]) -> Result<Vec<Vertex>, Box<dyn Error
 				vertices.push(Vertex {
 						position: [x, y, z],
 				});
-				//println!("{},{}|{}|{}", i, x, y, z)
 		}
 		Ok(vertices)
 }

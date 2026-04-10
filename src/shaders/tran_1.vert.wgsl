@@ -1,11 +1,4 @@
 @vertex
-fn main(@builtin(vertex_index) vertex_index: u32) -> @builtin(position) vec4<f32> {
-    var positions = array<vec2<f32>, 3>(
-        vec2( 0.0,  0.5),
-        vec2(-0.5, -0.5),
-        vec2( 0.5, -0.5),
-    );
-    
-    let pos = positions[vertex_index];
-    return vec4(pos, 0.0, 1.0);
+fn main(@location(0) vertices: vec3<f32>) -> @builtin(position) vec4<f32> {
+    return vec4(vertices/3.0,1.0);
 }
